@@ -1,4 +1,4 @@
-# Google Cloud Plateform - Cloud SQL
+# Google Cloud Plateform - Cloud SQL Read Replica
 
 ## Example
 

@@ -78,7 +78,7 @@ variable "maintenance_window_day_master" {
 
 variable "maintenance_window_day_replica" {
     type = "string"
-    default = 4
+    default = 3
     description = "Day of maintenance (integer)"
 }
 
@@ -96,7 +96,7 @@ variable "maintenance_window_hour_replica" {
 
 variable "backup_enabled" {
     type = "string"
-    default = true
+    default = false
     description = "Backup activation"
 }
 
