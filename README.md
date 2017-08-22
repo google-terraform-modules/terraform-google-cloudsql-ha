@@ -17,7 +17,7 @@ module "sql-rr" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| backup_enabled | Backup activation | string | `true` | no |
+| backup_enabled | Backup activation | string | `false` | no |
 | backup_start_time | Start time of the daily backup | string | `02:30` | no |
 | cidr_ip_access | A CIDR notation IPv4 or IPv6 address that is allowed to access this instance | string | `0.0.0.0/0` | no |
 | database_version | Version of the database (MYSQL_5_6, MYSQL_5_7, POSTGRES_9_6) | string | `MYSQL_5_7` | no |
@@ -29,7 +29,7 @@ module "sql-rr" {
 | instance_size_master | size of instance (ex: db-f1-micro) | string | `db-f1-micro` | no |
 | instance_size_replica | size of instance (ex: db-f1-micro) | string | `db-f1-micro` | no |
 | maintenance_window_day_master | Day of maintenance (integer) | string | `7` | no |
-| maintenance_window_day_replica | Day of maintenance (integer) | string | `4` | no |
+| maintenance_window_day_replica | Day of maintenance (integer) | string | `3` | no |
 | maintenance_window_hour_master | Hour of maintenance (integer) | string | `4` | no |
 | maintenance_window_hour_replica | Hour of maintenance (integer) | string | `4` | no |
 | name | Name of the SQL instance | string | - | yes |
@@ -43,6 +43,9 @@ module "sql-rr" {
 
 | Name | Description |
 |------|-------------|
-| instance_sql_ipv4 | The IPv4 address assigned |
-| instance_sql_setting_version | Used to make sure changes to the settings block are atomic |
-| users_self_link | The URL of the created resource |
+| master_instance_sql_ipv4 | The IPv4 address assigned |
+| master_instance_sql_setting_version | Used to make sure changes to the settings block are atomic |
+| master_users_self_link | The URL of the created resource |
+| replica_instance_sql_ipv4 | The IPv4 address assigned |
+| replica_instance_sql_setting_version | Used to make sure changes to the settings block are atomic |
+| replica_users_self_link | The URL of the created resource |
