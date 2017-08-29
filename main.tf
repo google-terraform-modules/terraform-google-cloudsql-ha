@@ -11,7 +11,7 @@ module "new_instance_sql_master" {
   maintenance_window_day = "${var.maintenance_window_day_master}"
   maintenance_window_hour = "${var.maintenance_window_hour_master}"
   backup_binary_log_enabled = "true"
-  backup_enabled = "${var.backup_enabled}"
+  backup_enabled = "true"
   backup_start_time = "${var.backup_start_time}"
 
   cidr_ip_access = "${var.cidr_ip_access}"
