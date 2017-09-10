@@ -67,6 +67,24 @@ variable "cidr_ip_access" {
     description = "A CIDR notation IPv4 or IPv6 address that is allowed to access this instance"
 }
 
+variable "require_ssl" {
+    type = "string"
+    default = "false"
+    description = "Connection SSL is required"
+}
+
+variable "ipv4_enabled" {
+    type = "string"
+    default = "true"
+    description = "Instance should be assigned an IP address"
+}
+
+variable "connect_retry_interval" {
+    type = "string"
+    default = "60"
+    description = "The number of seconds between connect retries."
+}
+
 
 // MySQL - backup & maintenance
 
