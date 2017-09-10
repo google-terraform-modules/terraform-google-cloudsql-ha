@@ -1,4 +1,3 @@
-# MASTER
 output "master_instance_sql_ipv4" {
     value = "${google_sql_database_instance.new_instance_sql_master.ip_address.0.ip_address}"
     description = "The IPv4 address assigned for master"
@@ -20,7 +19,6 @@ output "master_settings_version" {
 }
 
 
-# REPLICA
 output "replica_instance_sql_ipv4" {
     value = "${google_sql_database_instance.new_instance_sql_replica.ip_address.0.ip_address}"
     description = "The IPv4 address assigned for replica"
