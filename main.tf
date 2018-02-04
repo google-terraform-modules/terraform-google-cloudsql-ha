@@ -1,21 +1,26 @@
-resource "google_sql_database_instance" "new_instance_sql_master" {
-  name = "${var.name}-${var.region}-master"
+locals {
+  name_prefix = "${var.name}-${var.env}-${var.region}"
+}
 
-  region = "${var.region}"
+resource "google_sql_database_instance" "new_instance_sql_master" {
+  name = "${local.name_prefix}-master"
+
+  region           = "${var.region}"
   database_version = "${var.database_version}"
 
   settings {
-    tier = "${var.instance_size_master}"
+    tier            = "${var.instance_size_master}"
     disk_type       = "${var.disk_type_master}"
     disk_size       = "${var.disk_size}"
     disk_autoresize = "${var.disk_autoresize}"
 
     ip_configuration {
       authorized_networks = {
-        name = "first access master"
+        name  = "first access master"
         value = "${var.cidr_ip_access}"
       }
-      require_ssl = "${var.require_ssl}"
+
+      require_ssl  = "${var.require_ssl}"
       ipv4_enabled = "${var.ipv4_enabled}"
     }
 
@@ -30,28 +35,28 @@ resource "google_sql_database_instance" "new_instance_sql_master" {
     }
 
     maintenance_window {
-      day = "${var.maintenance_window_day_master}"
+      day  = "${var.maintenance_window_day_master}"
       hour = "${var.maintenance_window_hour_master}"
     }
   }
 }
 
 resource "google_sql_database_instance" "new_instance_sql_replica" {
-  name = "${var.name}-${var.region}-replica"
+  name = "${local.name_prefix}-replica"
 
-  region = "${var.region}"
-  database_version = "${var.database_version}"
+  region               = "${var.region}"
+  database_version     = "${var.database_version}"
   master_instance_name = "${google_sql_database_instance.new_instance_sql_master.name}"
 
   replica_configuration {
     connect_retry_interval = "${var.connect_retry_interval}"
-    failover_target = "true"
+    failover_target        = "true"
   }
 
   settings {
-    tier = "${var.instance_size_replica}"
-    disk_type = "${var.disk_type_replica}"
-    disk_size = "${var.disk_size}"
+    tier            = "${var.instance_size_replica}"
+    disk_type       = "${var.disk_type_replica}"
+    disk_size       = "${var.disk_size}"
     disk_autoresize = "${var.disk_autoresize}"
 
     location_preference {
@@ -59,15 +64,16 @@ resource "google_sql_database_instance" "new_instance_sql_replica" {
     }
 
     maintenance_window {
-      day = "${var.maintenance_window_day_replica}"
+      day  = "${var.maintenance_window_day_replica}"
       hour = "${var.maintenance_window_hour_replica}"
     }
   }
 }
 
 resource "google_sql_user" "new_instance_sql_users" {
-  instance  = "${google_sql_database_instance.new_instance_sql_master.name}"
-  host     = "${var.hostname}"
-  name      = "${var.username}"
-  password = "${var.password}"
+  count    = "${length(var.username)}"
+  instance = "${google_sql_database_instance.new_instance_sql_master.name}"
+  host     = "${element(var.hostname, count.index)}"
+  name     = "${element(var.username, count.index)}"
+  password = "${element(var.password, count.index)}"
 }
