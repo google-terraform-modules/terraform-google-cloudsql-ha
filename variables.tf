@@ -38,7 +38,6 @@ variable "master" {
 # disk_size (default: 10)
 # disk_auto (default: true)
 # activation_policy (default: ALWAYS)
-# availability_type (default: ZONAL)
 # retry_interval (default: 60)
 # maintenance_day (default: 3)
 # maintenance_hour (default: 2)

@@ -15,7 +15,7 @@ resource "google_sql_database_instance" "new_instance_sql_master" {
     disk_size                   = "${lookup(var.master, "disk_size", 10)}"
     disk_autoresize             = "${lookup(var.master, "disk_auto", true)}"
     activation_policy           = "${lookup(var.master, "activation_policy", "ALWAYS")}"
-    availability_type           = "${lookup(var.master, "availability_type", "ZONAL")}"
+    availability_type           = "ZONAL"
     replication_type            = "${lookup(var.master, "replication_type", "SYNCHRONOUS")}"
     authorized_gae_applications = "${var.authorized_gae_applications_master}"
     user_labels                 = "${var.labels}"
