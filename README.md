@@ -1,14 +1,16 @@
 # Google Cloud SQL Cluster (HA-RR)
 
 Compatible provider `1.14`   
-**Warning** : this module support only MySQL-RR. Google Cloud Plateform [doesn't support](https://cloud.google.com/sql/docs/postgres/replication/) **ZONAL** replication. 
+**Warning** : this module support only MySQL-RR. Google Cloud Plateform [doesn't support](https://cloud.google.com/sql/docs/postgres/replication/) **ZONAL** replication.
+
+If you want to create a PostgreSQL HA cluster, you can use [google-terraform-modules/terraform-google-cloudsql](https://github.com/google-terraform-modules/terraform-google-cloudsql).
 
 ## Example
 
 * europe-west1, 1 master (zone b), 1 failover-replica (zone c), db-f1-micro
 ```hcl
 module "cloudsql-rr" {
-  source = "./terraform-google-cloudsql-ha"
+  source = "git::ssh://git@github.com:google-terraform-modules/terraform-google-cloudsql-ha.git"
 
   general = {
     name       = "mydatabase"
