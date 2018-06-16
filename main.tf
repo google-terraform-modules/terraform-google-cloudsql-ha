@@ -1,47 +1,44 @@
 locals {
-  name_prefix = "${format("%s-%s-%s", var.name, var.env, var.region)}"
+  name_prefix = "${var.general["name"]}-${var.general["env"]}-${var.general["region"]}"
 }
 
 # Master CloudSQL
 # https://www.terraform.io/docs/providers/google/r/sql_database_instance.html
 resource "google_sql_database_instance" "new_instance_sql_master" {
-  name = "${format("%s-master", local.name_prefix)}"
-
-  region           = "${var.region}"
-  database_version = "${var.database_version}"
+  name             = "${local.name_prefix}-master"
+  region           = "${var.general["region"]}"
+  database_version = "${lookup(var.general, "db_version", "MYSQL_5_7")}"
 
   settings {
-    tier                        = "${var.instance_size_master}"
-    disk_type                   = "${var.disk_type_master}"
-    disk_size                   = "${var.disk_size}"
-    disk_autoresize             = "${var.disk_autoresize}"
-    activation_policy           = "${var.activation_policy}"
+    tier                        = "${lookup(var.master, "tier", "db-f1-micro")}"
+    disk_type                   = "${lookup(var.master, "disk_type", "PD_SSD")}"
+    disk_size                   = "${lookup(var.master, "disk_size", 10)}"
+    disk_autoresize             = "${lookup(var.master, "disk_auto", true)}"
+    activation_policy           = "${lookup(var.master, "activation_policy", "ALWAYS")}"
+    availability_type           = "${lookup(var.master, "availability_type", "ZONAL")}"
+    replication_type            = "${lookup(var.master, "replication_type", "SYNCHRONOUS")}"
     authorized_gae_applications = "${var.authorized_gae_applications_master}"
+    user_labels                 = "${var.labels}"
 
     ip_configuration {
-      authorized_networks = {
-        name  = "first access"
-        value = "${var.cidr_ip_access}"
-      }
-
-      require_ssl  = "${var.require_ssl}"
-      ipv4_enabled = "${var.ipv4_enabled}"
+      require_ssl  = "${lookup(var.master, "require_ssl", false)}"
+      ipv4_enabled = "${lookup(var.master, "ipv4_enabled", true)}"
     }
 
     location_preference {
-      zone = "${format("%s-%s", var.region, var.zone_master)}"
+      zone = "${var.general["region"]}-${var.master["zone"]}"
     }
 
     backup_configuration {
-      binary_log_enabled = "true"
-      enabled            = "${var.backup_enabled}"
-      start_time         = "${var.backup_start_time}"
+      binary_log_enabled = true
+      enabled            = "${lookup(var.general, "backup_enabled", true)}"
+      start_time         = "${lookup(var.general, "backup_time", "02:30")}" # every 2:30AM
     }
 
     maintenance_window {
-      day          = "${var.maintenance_window_day_master}"
-      hour         = "${var.maintenance_window_hour_master}"
-      update_track = "${var.maintenance_update_track}"
+      day          = "${lookup(var.master, "maintenance_day", 1)}"          # Monday
+      hour         = "${lookup(var.master, "maintenance_hour", 2)}"         # 2AM
+      update_track = "${lookup(var.master, "maintenance_track", "stable")}"
     }
   }
 }
@@ -49,34 +46,34 @@ resource "google_sql_database_instance" "new_instance_sql_master" {
 # Replica CloudSQL
 # https://www.terraform.io/docs/providers/google/r/sql_database_instance.html
 resource "google_sql_database_instance" "new_instance_sql_replica" {
-  name = "${format("%s-replica", local.name_prefix)}"
-
-  region               = "${var.region}"
-  database_version     = "${var.database_version}"
+  name                 = "${local.name_prefix}-replica"
+  region               = "${var.general["region"]}"
+  database_version     = "${lookup(var.general, "db_version", "MYSQL_5_7")}"
   master_instance_name = "${google_sql_database_instance.new_instance_sql_master.name}"
 
   replica_configuration {
-    connect_retry_interval = "${var.connect_retry_interval}"
-    failover_target        = "true"
+    connect_retry_interval = "${lookup(var.replica, "retry_interval", "60")}"
+    failover_target        = true
   }
 
   settings {
-    tier                        = "${var.instance_size_replica}"
-    disk_type                   = "${var.disk_type_replica}"
-    disk_size                   = "${var.disk_size}"
-    disk_autoresize             = "${var.disk_autoresize}"
-    activation_policy           = "${var.activation_policy}"
+    tier                        = "${lookup(var.replica, "tier", "db-f1-micro")}"
+    disk_type                   = "${lookup(var.replica, "disk_type", "PD_SSD")}"
+    disk_size                   = "${lookup(var.replica, "disk_size", 10)}"
+    disk_autoresize             = "${lookup(var.replica, "disk_auto", true)}"
+    activation_policy           = "${lookup(var.replica, "activation_policy", "ALWAYS")}"
+    availability_type           = "ZONAL"
     authorized_gae_applications = "${var.authorized_gae_applications_replica}"
-    crash_safe_replication      = "true"
+    crash_safe_replication      = true
 
     location_preference {
-      zone = "${format("%s-%s", var.region, var.zone_replica)}"
+      zone = "${var.general["region"]}-${var.replica["zone"]}"
     }
 
     maintenance_window {
-      day          = "${var.maintenance_window_day_replica}"
-      hour         = "${var.maintenance_window_hour_replica}"
-      update_track = "${var.maintenance_update_track}"
+      day          = "${lookup(var.replica, "maintenance_day", 3)}"          # Wednesday
+      hour         = "${lookup(var.replica, "maintenance_hour", 2)}"         # 2AM
+      update_track = "${lookup(var.replica, "maintenance_track", "stable")}"
     }
   }
 }
