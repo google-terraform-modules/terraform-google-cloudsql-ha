@@ -38,7 +38,7 @@ variable "master" {
 # disk_size (default: 10)
 # disk_auto (default: true)
 # activation_policy (default: ALWAYS)
-# retry_interval (default: 60)
+# retry_interval (default: 60) => disabled
 # maintenance_day (default: 3)
 # maintenance_hour (default: 2)
 # maintenance_track (default: stable)

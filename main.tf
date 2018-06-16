@@ -52,8 +52,8 @@ resource "google_sql_database_instance" "new_instance_sql_replica" {
   master_instance_name = "${google_sql_database_instance.new_instance_sql_master.name}"
 
   replica_configuration {
-    connect_retry_interval = "${lookup(var.replica, "retry_interval", "60")}"
-    failover_target        = true
+    # connect_retry_interval = "${lookup(var.replica, "retry_interval", "60")}"
+    failover_target = true
   }
 
   settings {
